@@ -3,8 +3,9 @@ let THREE = require("three");
 let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls");
 
 (function () {
-  var scene, camera, renderer, controls;
-  var mesh, light, ambient;
+  let scene, camera, renderer, controls;
+  let light, ambient;
+  let chessbord_num = 17
 
   init();
   animate();
@@ -20,7 +21,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
     );
     camera.position.set(-5, 10, 0);
 
-    ambient = new THREE.AmbientLight(0xffffff, 0.3);
+    ambient = new THREE.AmbientLight(0xffffff, 0.8);
     light = new THREE.DirectionalLight(0xffffff, 0.8);
 
     scene.add(ambient, light);
@@ -35,12 +36,14 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
 
     //パネルの生成
     let panel_array = new THREE.Group();
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load('chess.png');
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < chessbord_num; i++) {
       let geometry_P = new THREE.BoxGeometry(0.1, 9, 16);
-      let material_P = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+      let material_P = new THREE.MeshStandardMaterial({ map:texture });
       let panel = new THREE.Mesh(geometry_P, material_P);
-      const radian = (i / 10) * Math.PI * 2;
+      const radian = (i / chessbord_num) * Math.PI * 2;
       panel.position.set(100 * Math.cos(radian), 10, 100 * Math.sin(radian));
       panel.rotation.y = -radian;
 
