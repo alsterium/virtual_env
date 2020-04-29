@@ -13,12 +13,12 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(
-      75,
+      50,
       window.innerWidth / window.innerHeight,
       1,
       10000
     );
-    camera.position.set(-5, 1, 0);
+    camera.position.set(-5, 10, 0);
 
     ambient = new THREE.AmbientLight(0xffffff, 0.3);
     light = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -34,21 +34,20 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
     scene.add(floor);
 
     //パネルの生成
-    let pannel_array = new Array();
-    pannel_array.length = 10;
+    let panel_array = new THREE.Group();
 
-    for (let i = 0; i < pannel_array.length; i++) {
-      let geometry_P = new THREE.BoxGeometry(16, 9, 0.1);
+    for (let i = 0; i < 10; i++) {
+      let geometry_P = new THREE.BoxGeometry(0.1, 9, 16);
       let material_P = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-      panel = new THREE.Mesh(geometry_P, material_P);
-      panel.position.set(20, 9, 0);
-      panel.rotation.y = (90 / 180) * Math.PI;
-      
+      let panel = new THREE.Mesh(geometry_P, material_P);
+      const radian = (i / 10) * Math.PI * 2;
+      panel.position.set(100 * Math.cos(radian), 10, 100 * Math.sin(radian));
+      panel.rotation.y = -radian;
+
+      panel_array.add(panel);
     }
 
-    scene.add(panel);
-    
-    
+    scene.add(panel_array);
 
     let axesHelper = new THREE.AxesHelper();
     scene.add(axesHelper);
