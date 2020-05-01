@@ -6,12 +6,15 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
   let scene, renderer, controls;
   let light, ambient;
   var camera_clustor = new THREE.Group();
-  let keyboard = new KeyboardState();
-  let CameraActive = false;
+  let CameraActive = 1;
   let chessbord_num = 17;
   let chessbord_distance = 60;
-  let camera_distance = 20;
-  let camera_num = 3;
+  let camera_distance = 40;
+  let camera_num = 10;
+
+  document.addEventListener('keydown',(e)=>{
+    CameraActive = e.key;
+  });
 
   init();
   animate();
@@ -32,10 +35,10 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
         10,
         camera_distance * Math.sin(radian)
       );
+      camera.rotation.y = - radian;
       camera_clustor.add(camera);
     }
     scene.add(camera_clustor);
-    console.log(camera_clustor);
 
     ambient = new THREE.AmbientLight(0xffffff, 0.8);
     light = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -53,7 +56,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
     //パネルの生成
     let panel_array = new THREE.Group();
     const loader = new THREE.TextureLoader();
-    const texture = loader.load("chess.png");
+    const texture = loader.load("chessboard.jpg");
 
     for (let i = 0; i < chessbord_num; i++) {
       let geometry_P = new THREE.BoxGeometry(0.1, 4.5, 6.4);
@@ -65,7 +68,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
         10,
         chessbord_distance * Math.sin(radian)
       );
-      panel.rotation.y = -radian;
+      panel.rotation.y = - radian;
 
       panel_array.add(panel);
     }
@@ -78,22 +81,17 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     //カメラコントロール
-    controls = new Orbit.OrbitControls(camera_clustor.children[1], renderer.domElement);
+    // controls = new Orbit.OrbitControls(camera_clustor.children[1], renderer.domElement);
 
     document.body.appendChild(renderer.domElement);
   }
 
   function update(){
-    if ( keyboard.pressed("1") )
-    {  CameraActive = true;  }
-    if ( keyboard.pressed("2") )
-    {  CameraActive = false;  }
+
   }
+
   function render(){
-    if(CameraActive)
-    renderer.render(scene, camera_clustor.children[0]);
-    else
-    renderer.render(scene, camera_clustor.children[1]);
+    renderer.render(scene, camera_clustor.children[CameraActive]);
   }
 
   function animate() {
