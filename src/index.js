@@ -3,16 +3,17 @@ let THREE = require("three");
 let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls");
 
 (function () {
-  let scene, renderer, controls;
+  let scene, renderer, controls, orbitCam;
   let light, ambient;
   var camera_clustor = new THREE.Group();
+  let camera_clustor_helper = new THREE.Group();
   let CameraActive = 1;
-  let chessbord_num = 17;
+  let chessbord_num = 10;
   let chessbord_distance = 60;
-  let camera_distance = 40;
+  let camera_distance = 30;
   let camera_num = 10;
 
-  document.addEventListener('keydown',(e)=>{
+  document.addEventListener("keydown", (e) => {
     CameraActive = e.key;
   });
 
@@ -21,7 +22,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
 
   function init() {
     scene = new THREE.Scene();
-
+    // カメラのクラスタ（わっか）
     for (i = 0; i < camera_num; i++) {
       let camera = new THREE.PerspectiveCamera(
         87,
@@ -31,14 +32,31 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
       );
       const radian = (i / camera_num) * Math.PI * 2;
       camera.position.set(
-        camera_distance * Math.cos(radian),
+        camera_distance * Math.sin(radian),
         10,
-        camera_distance * Math.sin(radian)
+        camera_distance * Math.cos(radian)
       );
-      camera.rotation.y = - radian;
+      camera.rotation.set(0, radian - Math.PI, 0);
       camera_clustor.add(camera);
+      let helper = new THREE.CameraHelper(camera);
+      camera_clustor_helper.add(helper);
+      // camera_clustor.add(() => {
+      //   return new THREE.CameraHelper(camera);
+      // });
     }
     scene.add(camera_clustor);
+    scene.add(camera_clustor_helper);
+
+    //デバック用カメラ
+    orbitCam = new THREE.PerspectiveCamera(
+      87,
+      window.innerWidth / window.innerHeight,
+      1,
+      10000
+    );
+    orbitCam.position.set(0, 100, 0);
+    orbitCam.lookAt(new THREE.Vector3(0, 0, 0));
+    scene.add(orbitCam);
 
     ambient = new THREE.AmbientLight(0xffffff, 0.8);
     light = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -68,7 +86,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
         10,
         chessbord_distance * Math.sin(radian)
       );
-      panel.rotation.y = - radian;
+      panel.rotation.y = -radian;
 
       panel_array.add(panel);
     }
@@ -79,19 +97,17 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
     scene.add(axesHelper);
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
-
-    //カメラコントロール
-    // controls = new Orbit.OrbitControls(camera_clustor.children[1], renderer.domElement);
+    // controls = new Orbit.OrbitControls(orbitCam,renderer.domElement);
 
     document.body.appendChild(renderer.domElement);
   }
 
-  function update(){
+  function update() {}
 
-  }
-
-  function render(){
-    renderer.render(scene, camera_clustor.children[CameraActive]);
+  function render() {
+    if (isFinite(CameraActive))
+      renderer.render(scene, camera_clustor.children[CameraActive]);
+    else renderer.render(scene, orbitCam);
   }
 
   function animate() {
