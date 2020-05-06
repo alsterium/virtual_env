@@ -12,6 +12,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
   let chessbord_distance = 60;
   let camera_distance = 30;
   let camera_num = 10;
+  let chessboard_scale = 1.4;
 
   document.addEventListener("keydown", (e) => {
     CameraActive = e.key;
@@ -74,10 +75,14 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
     //パネルの生成
     let panel_array = new THREE.Group();
     const loader = new THREE.TextureLoader();
-    const texture = loader.load("chessboard.jpg");
+    const texture = loader.load("chess.png");
 
     for (let i = 0; i < chessbord_num; i++) {
-      let geometry_P = new THREE.BoxGeometry(0.1, 4.5, 6.4);
+      let geometry_P = new THREE.BoxGeometry(
+        0.1,
+        10 * chessboard_scale,
+        13 * chessboard_scale
+      );
       let material_P = new THREE.MeshStandardMaterial({ map: texture });
       let panel = new THREE.Mesh(geometry_P, material_P);
       const radian = (i / chessbord_num) * Math.PI * 2;
@@ -88,7 +93,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
       );
       panel.rotation.y = -radian;
 
-      panel_array.add(panel);
+      if(i%2==0)panel_array.add(panel);
     }
 
     scene.add(panel_array);
