@@ -1,6 +1,7 @@
 let THREE = require("three");
 //orbitControl
 let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls");
+let saveJsonData = require("./JsonFileSave.js");
 
 (function () {
   let scene, renderer, controls, orbitCam;
@@ -24,6 +25,8 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
   function init() {
     scene = new THREE.Scene();
     // カメラのクラスタ（わっか）
+    //カメラの位置情報を格納する変数
+    let camPosArray = new Array();
     for (i = 0; i < camera_num; i++) {
       let camera = new THREE.PerspectiveCamera(
         87,
@@ -38,13 +41,21 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
         camera_distance * Math.cos(radian)
       );
       camera.rotation.set(0, radian - Math.PI, 0);
+
+      //カメラの位置情報を取り出す
+      let campos;
+      campos = {
+        camera: i,
+        Position: camera.position,
+      };
+
+      camPosArray.push(campos);
+
       camera_clustor.add(camera);
       let helper = new THREE.CameraHelper(camera);
       camera_clustor_helper.add(helper);
-      // camera_clustor.add(() => {
-      //   return new THREE.CameraHelper(camera);
-      // });
     }
+    saveJsonData(camPosArray);
     scene.add(camera_clustor);
     scene.add(camera_clustor_helper);
 
@@ -93,7 +104,7 @@ let Orbit = require("../node_modules/three/examples/jsm/controls/OrbitControls")
       );
       panel.rotation.y = -radian;
 
-      if(i%2==0)panel_array.add(panel);
+      if (i % 2 == 0) panel_array.add(panel);
     }
 
     scene.add(panel_array);
