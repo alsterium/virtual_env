@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/alsterium/virtual_env#readme",
   "devDependencies": {
-    "three": "^0.115.0",
+    "three": "^0.125.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
